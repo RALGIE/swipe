@@ -5,30 +5,16 @@ import { View, Animated, Button } from 'react-native';
 export default class Ball extends React.Component {
   componentWillMount(){
      this.position = new Animated.ValueXY(0,0);
-     // Animated.spring(this.position, {
-     //   toValue: {x:200, y:500}
-     // }).start();
+     Animated.spring(this.position, {
+       toValue: {x:200, y:500}
+     }).start();
   }
   render() {
-    return ([
+    return (
       <Animated.View style={this.position.getLayout()}>
           <View style={styles.ball} />
-      </Animated.View>,
-      <View style={styles.button} >
-          <Button onPress={
-            () => {
-              Animated.sequence([
-            Animated.spring(this.position, {
-              toValue: {x:200, y:500}
-            }),
-            Animated.spring(this.position, {
-              toValue: {x:0, y:0}
-            })
-            ]).start();
-
-          }} title="Press Me" />
-      </View>
-      ]);
+      </Animated.View>
+    );
   }
 }
 
