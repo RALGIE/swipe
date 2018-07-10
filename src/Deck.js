@@ -27,9 +27,9 @@ export default class Deck extends React.Component {
           // The user has released all touches while this view is the
           // responder. This typically means a gesture has succeeded
           if (gesture.dx > SWIPE_THRESHOLD){
-            this.forceSwipeRight();
+              this.forceSwipe("RIGHT");
           } else if (gesture.dx < -SWIPE_THRESHOLD){
-              console.log("swipe left!");
+              this.forceSwipe("LEFT");
           } else {
               this.resetPosition();
           }
@@ -39,9 +39,10 @@ export default class Deck extends React.Component {
     //this._panResponder = panResponder;
     this.state = { panResponder, position }
   }
-  forceSwipeRight(){
+  forceSwipe(direction){
+    const x = direction === "RIGHT" ? SCREEN_WIDTH : -SCREEN_WIDTH;
     Animated.timing(this.state.position, {
-      toValue: {x:SCREEN_WIDTH, y:0},
+      toValue: {x, y:0},
       duration: SWIPE_OUT_DURATION
     }).start();
   }
