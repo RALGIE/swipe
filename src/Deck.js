@@ -74,6 +74,9 @@ export default class Deck extends React.Component {
       }
   }
   renderCards(){
+     if (this.state.index >= this.props.data.length){
+       return this.props.renderNoMoreCards();
+     }
      return this.props.data.map((item, mapIndex) => {
        if (mapIndex < this.state.index){
          return null;
