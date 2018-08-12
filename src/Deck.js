@@ -3,7 +3,10 @@ import {
   View,
   Animated,
   PanResponder,
-  Dimensions
+  Dimensions,
+  StyleSheet,
+  LayoutAnimation,
+  UIManager
 } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -43,6 +46,18 @@ export default class Deck extends React.Component {
     //this._panResponder = panResponder;
     this.state = { panResponder, position, index : 0  }
   }
+
+  componentWillReceiveProps(nextProps){
+    if (nextProps.data !== this.props.data ) {
+      this.setState({index :0}); 
+    }
+  }
+
+  componentWillUpdate(){
+    UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    LayoutAnimation.spring();  
+  }
+
   forceSwipe(direction){
     const x = direction === "RIGHT" ? SCREEN_WIDTH : -SCREEN_WIDTH;
     Animated.timing(this.state.position, {
@@ -77,31 +92,46 @@ export default class Deck extends React.Component {
      if (this.state.index >= this.props.data.length){
        return this.props.renderNoMoreCards();
      }
+
      return this.props.data.map((item, mapIndex) => {
+       console.log("mapindex=" + mapIndex);
+       console.log("this.state.index=" + this.state.index);
+       console.log("item=",item);
        if (mapIndex < this.state.index){
          return null;
        }
-       if (mapIndex === this.state.index){
+       if (mapIndex == this.state.index){
+           console.log("render card with id " + item.id);
            return (
              <Animated.View
              key={item.id}
-             style={this.getCardStyle()}
+             style={[this.getCardStyle(), styles.cardstyle]}
               {...this.state.panResponder.panHandlers}
              >
              {this.props.renderCard(item)}
              </Animated.View>
            );
        }
-       return this.props.renderCard(item);
-     });
+       return (
+         <Animated.View 
+           key={item.id} 
+           style={[styles.cardstyle, {top : 10 * (mapIndex - this.state.index)}]}>
+           {this.props.renderCard(item)}
+         </Animated.View>
+       );
+     }).reverse();
   }
   render(){
     return (
-
-      //de 3 puntjes zet alle functies over naar de view
       <View>
          {this.renderCards()}
       </View>
-
   );}
 }
+
+const styles = StyleSheet.create({
+  cardstyle: {
+    position: 'absolute',
+    width: SCREEN_WIDTH
+  },
+});
